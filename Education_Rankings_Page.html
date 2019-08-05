@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<!-- How to create Mouse Events for D3 -->
+<html>
+
+  <head>
+    <!-- Load D3 from site -->
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+    <!-- CSS (Styling) -->
+    <style type="text/css">
+
+      body {
+        margin: 20;
+        font-family: sans-serif;
+        font-size: 15px;
+      }
+
+      .axis path, .axis line {
+        fill: none;
+        stroke: red;
+        shape-rendering: crispEdges;  
+      }
+
+      /*
+      
+      circle:hover{
+        fill: green;
+      }
+      */
+
+    </style>
+
+  </head>
+
+  <body>
+<div class="navbar">
+  <a href="#">Home</a>
+  <a href="#">Population</a>
+  <a href="#">Income</a>
+</div>
+<div class="header">
+  <h1>Ranking the 50 states based on Education</h1>
+<p>This visualization shows how states are doing when it comes to Education. This basically shows their ranks. Please click the circles in the graph below to see the states and their ranks when it comes to education levels (for 2010)!</p>
+<p>Please click the links on the navigation bars on top and bottom of the pages to review other rankings!</p>
+</div>
+    <!-- Begin Javascript -->
+    <script type="text/javascript">
+      var w = window.innerWidth,
+          h = window.innerHeight,
+          margin = { top: 40, right: 20, bottom: 20, left: 40 },
+          radius = 6;
+
+      var svg = d3.select("body").append("svg").attr({
+        width: w,
+        height: h
+      });
+
+      var dataset = [
+        { x: 1, y: 40, z: "Alabama" },
+        { x: 2, y: 28, z: "Alaska" },
+        { x: 3, y: 26, z: "Arizon" },
+        { x: 4, y: 49, z: "Arkansas" },
+        { x: 5, y: 14, z: "California" },
+        { x: 6, y: 8, z: "Colorado" },
+        { x: 7, y: 3, z: "Connecticut" },
+        { x: 8, y: 12, z: "Delaware" },
+        { x: 9, y: 29, z: "Florida" },
+        { x: 10, y: 20, z: "Georgia" },
+        { x: 11, y: 24, z: "Hawaii" },
+        { x: 12, y: 42, z: "Idaho" },
+        { x: 13, y: 11, z: "Illinois" },
+        { x: 14, y: 39, z: "Indiana" },
+        { x: 15, y: 41, z: "Iowa" },
+        { x: 16, y: 19, z: "Kansas" },
+        { x: 17, y: 37, z: "Kentucky" },
+	{ x: 18, y: 45, z: "Louisiana" },
+	{ x: 19, y: 23, z: "Maine" },
+	{ x: 20, y: 2, z: "Maryland" },
+	{ x: 21, y: 1, z: "Massachusetts " },
+	{ x: 22, y: 21, z: "Michigan" },
+	{ x: 23, y: 17, z: "Minnesota " },
+	{ x: 24, y: 47, z: "Mississippi" },
+	{ x: 25, y: 25, z: "Missouri" },
+	{ x: 26, y: 32, z: "Montana" },
+	{ x: 27, y: 30, z: "Nebraska " },
+	{ x: 28, y: 46, z: "Nevada" },
+	{ x: 29, y: 9, z: "New Hampshire" },
+	{ x: 30, y: 7, z: "New Jersey" },
+	{ x: 31, y: 16, z: "New Mexico" },
+	{ x: 32, y: 5, z: "New York" },
+	{ x: 33, y: 27, z: "North Carolina" },
+	{ x: 34, y: 50, z: "North Dakota" },
+	{ x: 35, y: 31, z: "Ohio" },
+	{ x: 36, y: 43, z: "Oklahoma" },
+	{ x: 37, y: 15, z: "Oregon" },
+	{ x: 38, y: 18, z: "Pennsylvania" },
+	{ x: 39, y: 10, z: "Rhode Island" },
+	{ x: 40, y: 35, z: "South Carolina" },
+	{ x: 41, y: 44, z: "South Dakota" },
+	{ x: 42, y: 36, z: "Tennessee" },
+	{ x: 43, y: 33, z: "Texas" },
+	{ x: 44, y: 22, z: "Utah" },
+	{ x: 45, y: 6, z: "Vermont" },
+	{ x: 46, y: 4, z: "Virginia" },
+	{ x: 47, y: 13, z: "Washington" },
+	{ x: 48, y: 48, z: "West Virgina" },
+	{ x: 49, y: 34, z: "Wisconsin" },
+	{ x: 50, y: 38, z: "Wyoming" },
+      ];
+
+      // Passing in a function in d3.max to tell it what we're maxing (x value)
+      var xScale = d3.scale.linear()
+          .domain([0, d3.max(dataset, function (d) { return d.x; })])
+          .range([margin.left, w - margin.right]);  // Set margins for x specific
+
+      // Passing in a function in d3.max to tell it what we're maxing (y value)
+      var yScale = d3.scale.linear()
+          .domain([0, d3.max(dataset, function (d) { return d.y; })])
+          .range([margin.top, h - margin.bottom]);  // Set margins for y specific
+
+      // Add a X and Y Axis (Note: orient means the direction that ticks go, not position)
+      var xAxis = d3.svg.axis().scale(xScale).orient("top");
+      var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+      var circleAttrs = {
+          cx: function(d) { return xScale(d.x); },
+          cy: function(d) { return yScale(d.y); },
+          r: radius
+      };
+
+
+      // Adds X-Axis as a 'g' element
+      svg.append("g").attr({
+        "class": "axis",  // Give class so we can style it
+        transform: "translate(" + [0, margin.top] + ")"  // Translate just moves it down into position (or will be on top)
+      }).call(xAxis);  // Call the xAxis function on the group
+
+      // Adds Y-Axis as a 'g' element
+      svg.append("g").attr({
+        "class": "axis",
+        transform: "translate(" + [margin.left, 0] + ")"
+      }).call(yAxis);  // Call the yAxis function on the group
+
+      svg.selectAll("circle")
+          .data(dataset)
+          .enter()
+          .append("circle")
+          .attr(circleAttrs)  // Get attributes from circleAttrs var
+          .on("mouseover", handleMouseOver)
+          .on("mouseout", handleMouseOut);
+
+
+      // Create Event Handlers for mouse
+      function handleMouseOver(d, i) {  // Add interactivity
+
+            // Use D3 to select element, change color and size
+            d3.select(this).attr({
+              fill: "green",
+              r: radius * 2
+            });
+
+            // Specify where to put label of text
+            svg.append("text").attr({
+               id: "t" + d.x + "-" + d.y + "-" + i,  // Create an id for text so we can select it later for removing on mouseout
+
+                x: function() { return xScale(d.x) - 30; },
+                y: function() { return yScale(d.y) - 15; }
+            })
+            .text(function() {
+              return [d.z,d.y];  // Value of the text
+            });
+          }
+
+      function handleMouseOut(d, i) {
+            // Use D3 to select element, change color back to normal
+            d3.select(this).attr({
+              fill: "blue",
+              r: radius
+            });
+
+            // Select text by id and then remove
+            d3.select("#t" + d.x + "-" + d.y + "-" + i).remove();  // Remove text location
+          }
+
+    </script>
+<div class="navbar">
+  <a href="#">Home</a>
+  <a href="#">Population</a>
+  <a href="#">Income</a>
+</div>
+  </body>
+</html>
